@@ -2,23 +2,54 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
 
+
 def draw_plot():
-    # Read data from file
-    df = pd.read_csv('epa-sea-level.csv')
-    # Create scatter plot
-    fig, ax = plt.subplots()
-    ax.scatter(x= "Year", y = "CSIRO Adjusted Sea Level", data = df)
-    # Create first line of best fit
-    slope, intercept, r_value, p_value, std_err = linregress(df["Year"], df["CSIRO Adjusted Sea Level"])
-    years = pd.Series(range(1880,2050))
-    ax.plot(years, intercept + slope*years, 'r', label='first line of best fit')
-    # Create second line of best fit
-    df2 = df.loc[df["Year"] >= 2000]
-    slope2, intercept2, r_value2, p_value2, std_err2 = linregress(df2["Year"], df2["CSIRO Adjusted Sea Level"])
-    years2 = pd.Series(range(2000,2050))
-    ax.plot(years2, intercept2 + slope2*years2, 'b', label='second line of best fit')
-    # Add labels and title
-    ax.set(xlabel="Year", ylabel="Sea Level (inches)", title="Rise in Sea Level")
-    # Save plot and return data for testing (DO NOT MODIFY)
-    plt.savefig('sea_level_plot.png')
-    return plt.gca()
+    # Load the dataset
+    sea_levels = pd.read_csv("epa-sea-level.csv")
+
+    # Create figure and axis
+    figure, axis = plt.subplots(figsize=(10, 6))
+
+    # Scatter plot
+    axis.scatter(
+        sea_levels["Year"],
+        sea_levels["CSIRO Adjusted Sea Level"]
+    )
+
+    # Trend line using all available data
+    all_fit = linregress(
+        sea_levels["Year"],
+        sea_levels["CSIRO Adjusted Sea Level"]
+    )
+
+    future_years = range(1880, 2051)
+
+    axis.plot(
+        future_years,
+        all_fit.intercept + all_fit.slope * pd.Series(future_years),
+        color="red"
+    )
+
+    # Trend line using data from 2000 onward
+    recent_data = sea_levels[sea_levels["Year"] >= 2000]
+
+    recent_fit = linregress(
+        recent_data["Year"],
+        recent_data["CSIRO Adjusted Sea Level"]
+    )
+
+    recent_years = range(2000, 2051)
+
+    axis.plot(
+        recent_years,
+        recent_fit.intercept + recent_fit.slope * pd.Series(recent_years),
+        color="green"
+    )
+
+    # Labels and title
+    axis.set_xlabel("Year")
+    axis.set_ylabel("Sea Level (inches)")
+    axis.set_title("Rise in Sea Level")
+
+    plt.savefig("sea_level_plot.png")
+    return axis
