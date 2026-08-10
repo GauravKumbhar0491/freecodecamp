@@ -1,42 +1,25 @@
 import numpy as np
 
+
 def calculate(numbers):
     if len(numbers) != 9:
         raise ValueError("List must contain nine numbers.")
 
-    matrix = np.array(numbers).reshape(3, 3)
+    data = np.asarray(numbers).reshape(3, 3)
 
-    result = {
-        "mean": [
-            matrix.mean(axis=0).tolist(),
-            matrix.mean(axis=1).tolist(),
-            matrix.mean()
-        ],
-        "variance": [
-            matrix.var(axis=0).tolist(),
-            matrix.var(axis=1).tolist(),
-            matrix.var()
-        ],
-        "standard deviation": [
-            matrix.std(axis=0).tolist(),
-            matrix.std(axis=1).tolist(),
-            matrix.std()
-        ],
-        "max": [
-            matrix.max(axis=0).tolist(),
-            matrix.max(axis=1).tolist(),
-            matrix.max()
-        ],
-        "min": [
-            matrix.min(axis=0).tolist(),
-            matrix.min(axis=1).tolist(),
-            matrix.min()
-        ],
-        "sum": [
-            matrix.sum(axis=0).tolist(),
-            matrix.sum(axis=1).tolist(),
-            matrix.sum()
+    def statistics(operation):
+        return [
+            operation(data, axis=0).tolist(),
+            operation(data, axis=1).tolist(),
+            operation(data).item()
         ]
+
+    return {
+        "mean": statistics(np.mean),
+        "variance": statistics(np.var),
+        "standard deviation": statistics(np.std),
+        "max": statistics(np.max),
+        "min": statistics(np.min),
+        "sum": statistics(np.sum)
     }
 
-    return result
